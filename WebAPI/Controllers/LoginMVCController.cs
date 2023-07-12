@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
-using System.Web;
 using System.Web.Mvc;
 using WebAPI.Models;
 
@@ -14,7 +11,13 @@ namespace WebAPI.Controllers
     {
         public ActionResult Login()
         {
-            return View();
+            string email = Session["email"] as string;
+            if(email == null)
+            {
+                return View();
+            }
+
+            return RedirectToAction("Index", "MVCCrud");
         }
 
         [HttpPost]
@@ -32,9 +35,10 @@ namespace WebAPI.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                
 
-                 return RedirectToAction("Index", "MVCCrud");
+                Session["Email"] = login.Email;
+
+                return RedirectToAction("Index", "MVCCrud");
                 
                 
             }
@@ -85,6 +89,13 @@ namespace WebAPI.Controllers
 
         }
 
+        public ActionResult LogOUT()
+        {
+            Session.Clear();
+            return View("Login");
+            
+
+        }
         public string HashPassword(string password)
         {
             using (SHA256 sHA256Hash = SHA256.Create())

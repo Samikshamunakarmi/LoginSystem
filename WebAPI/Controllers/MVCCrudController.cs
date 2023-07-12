@@ -14,106 +14,145 @@ namespace WebAPI.Controllers
         // GET: MVCCrud
         public ActionResult Index()
         {
-            IEnumerable<MvcDatabaseConnectivity> persons = null;
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:44381/api/PersonalInfo");
+            string email = Session["Email"] as string;
 
-            // Send a GET request to retrieve the list of persons from the Web API
-            HttpResponseMessage response = client.GetAsync("PersonalInfo").Result;
-
-            if (response.IsSuccessStatusCode)
+            if(email != null)
             {
-                // Read the response content and parse it into a collection of MvcDatabaseConnectivity objects
-                persons = response.Content.ReadAsAsync<IEnumerable<MvcDatabaseConnectivity>>().Result;
+                IEnumerable<MvcDatabaseConnectivity> persons = null;
+                HttpClient client = new HttpClient();
+                client.BaseAddress = new Uri("https://localhost:44381/api/PersonalInfo");
+
+                // Send a GET request to retrieve the list of persons from the Web API
+                HttpResponseMessage response = client.GetAsync("PersonalInfo").Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // Read the response content and parse it into a collection of MvcDatabaseConnectivity objects
+                    persons = response.Content.ReadAsAsync<IEnumerable<MvcDatabaseConnectivity>>().Result;
+                }
+                else
+                {
+                    // Handle the error response accordingly
+                    // For example, you can log the error or display an error message to the user
+                    // You can also choose to return a different view in case of an error
+                    ModelState.AddModelError(string.Empty, "Failed to retrieve persons. Please try again later.");
+                }
+
+                return View(persons);
             }
             else
             {
-                // Handle the error response accordingly
-                // For example, you can log the error or display an error message to the user
-                // You can also choose to return a different view in case of an error
-                ModelState.AddModelError(string.Empty, "Failed to retrieve persons. Please try again later.");
+                return RedirectToAction("Login", "LoginMVC");
             }
+            
 
 
-            return View(persons);
+            
         }
 
 
 
         public ActionResult Create()
         {
-            return View();
+            string email = Session["Email"] as string;
+
+            if (email != null)
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login", "LoginMVC");
+            }
+
         }
 
         [HttpPost]
         public ActionResult Create(MvcDatabaseConnectivity mvcDatabase)
         {
-           
+            
+                HttpClient client = new HttpClient();
+                client.BaseAddress = new Uri("https://localhost:44381/api/PersonalInfo");
 
-         
-
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:44381/api/PersonalInfo");
-
-            HttpResponseMessage insertRecord = client.PostAsJsonAsync("PersonalInfo", mvcDatabase).Result;
-            if(insertRecord.IsSuccessStatusCode)
-            {
-                return RedirectToAction("Index");
+                HttpResponseMessage insertRecord = client.PostAsJsonAsync("PersonalInfo", mvcDatabase).Result;
+                if (insertRecord.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("Index");
+                }
+                return View("Create");
             }
-
-            return View("Create");
-        }
+            
+            
+        
 
         public ActionResult Details(int id)
         {
-            MvcDatabaseConnectivity person = null;
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:44381/api/");
+            string email = Session["Email"] as string;
 
-            // Send a GET request to retrieve the list of persons from the Web API
-            HttpResponseMessage response = client.GetAsync("PersonalInfo/" + id.ToString()).Result;
-
-            if (response.IsSuccessStatusCode)
+            if (email != null)
             {
-                // Read the response content and parse it into a collection of MvcDatabaseConnectivity objects
-                person = response.Content.ReadAsAsync<MvcDatabaseConnectivity>().Result;
+                MvcDatabaseConnectivity person = null;
+                HttpClient client = new HttpClient();
+                client.BaseAddress = new Uri("https://localhost:44381/api/");
+
+                // Send a GET request to retrieve the list of persons from the Web API
+                HttpResponseMessage response = client.GetAsync("PersonalInfo/" + id.ToString()).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // Read the response content and parse it into a collection of MvcDatabaseConnectivity objects
+                    person = response.Content.ReadAsAsync<MvcDatabaseConnectivity>().Result;
+                }
+                else
+                {
+                    // Handle the error response accordingly
+                    // For example, you can log the error or display an error message to the user
+                    // You can also choose to return a different view in case of an error
+                    ModelState.AddModelError(string.Empty, "Failed to retrieve persons. Please try again later.");
+                }
+                return View(person);
             }
             else
             {
-                // Handle the error response accordingly
-                // For example, you can log the error or display an error message to the user
-                // You can also choose to return a different view in case of an error
-                ModelState.AddModelError(string.Empty, "Failed to retrieve persons. Please try again later.");
+                return RedirectToAction("Login", "LoginMVC");
             }
 
 
-            return View(person);
         }
 
         public ActionResult Edit(int id)
         {
-            MvcDatabaseConnectivity person = null;
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:44381/api/");
+            string email = Session["Email"] as string;
 
-            // Send a GET request to retrieve the list of persons from the Web API
-            HttpResponseMessage response = client.GetAsync("PersonalInfo/" + id.ToString()).Result;
-
-            if (response.IsSuccessStatusCode)
+            if (email != null)
             {
-                // Read the response content and parse it into a collection of MvcDatabaseConnectivity objects
-                person = response.Content.ReadAsAsync<MvcDatabaseConnectivity>().Result;
+                MvcDatabaseConnectivity person = null;
+                HttpClient client = new HttpClient();
+                client.BaseAddress = new Uri("https://localhost:44381/api/");
+
+                // Send a GET request to retrieve the list of persons from the Web API
+                HttpResponseMessage response = client.GetAsync("PersonalInfo/" + id.ToString()).Result;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // Read the response content and parse it into a collection of MvcDatabaseConnectivity objects
+                    person = response.Content.ReadAsAsync<MvcDatabaseConnectivity>().Result;
+                }
+                else
+                {
+                    // Handle the error response accordingly
+                    // For example, you can log the error or display an error message to the user
+                    // You can also choose to return a different view in case of an error
+                    ModelState.AddModelError(string.Empty, "Failed to retrieve persons. Please try again later.");
+                }
+
+
+                return View(person);
             }
             else
             {
-                // Handle the error response accordingly
-                // For example, you can log the error or display an error message to the user
-                // You can also choose to return a different view in case of an error
-                ModelState.AddModelError(string.Empty, "Failed to retrieve persons. Please try again later.");
+                return RedirectToAction("Login", "LoginMVC");
             }
-
-
-            return View(person);
         }
 
         [HttpPost]
